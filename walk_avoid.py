@@ -1,4 +1,4 @@
-# Setup the library ready for use
+# imports
 import UltraBorg
 import sys
 import time
@@ -23,7 +23,7 @@ UB2.Init()
 # positionTest = float(sys.argv[1])
 full = float(1.0)
 zero = float(0)
-waitTime = 0.7
+waitTime = 0.6
 
 # get positions function
 
@@ -73,7 +73,7 @@ def setLeftPositionB():
 	#UB1.SetServoPosition4(zero)		# Set the current position of servo #4
 	time.sleep(waitTime)
 
-#leg positioning-C functions
+#leg positioning-C functions (unused)
 
 def setRightPositionC():
 
@@ -120,18 +120,10 @@ def checkDistance():
 	time.sleep(waitTime)
 	return UB1.GetDistance1()
 	time.sleep(waitTime)
-	
-def leftWalk():
 
-	lowerLeft()
-	
-	setLeftPositionA()
-	
-	raiseLeft()
-	
-	setLeftPositionB()
-		
-def rightWalk():
+# the left and right walk functions alternate by lifting the middle leg so the other 2 are off the ground, moving them back
+# and then lowering the middle leg down, and moving the other 2 legs back to push the bot forward, then raising the middle leg again	
+def leftWalk():
 
 	raiseRight()
 	
@@ -140,6 +132,20 @@ def rightWalk():
 	lowerRight()
 		
 	setRightPositionB()
+	
+	raiseRight()
+		
+def rightWalk():
+
+	raiseLeft()
+	
+	setLeftPositionB()
+	
+	lowerLeft()
+	
+	setLeftPositionA()
+	
+	raiseLeft()
 
 def walkForward():
 	# begin walk loop
@@ -148,8 +154,8 @@ def walkForward():
 		leftWalk()
 		
 		rightWalk()
-
-		if checkDistance() < 300:
+		# checks distance and if under a certain value with choose randomly to turn left or right
+		if checkDistance() < 500:
 			if random.randint(1, 100) < 50:
 				turnLeft()
 			else:
@@ -160,8 +166,8 @@ def turnLeft():
 	while True:
 
 		leftWalk()
-
-		if checkDistance() > 300:
+		# check distance again, if the minimum distance threshold is exceeded then proceed to walk forward again
+		if checkDistance() > 500:
 			walkForward()
 		else:
 			continue
@@ -171,8 +177,8 @@ def turnRight():
 	while True:
 
 		rightWalk()
-
-		if checkDistance() > 300:
+		# check distance again, if the minimum distance threshold is exceeded then proceed to walk forward again
+		if checkDistance() > 500:
 			walkForward()
 		else:
 			continue
@@ -180,7 +186,8 @@ def turnRight():
 
 # getPositions()
 
-if checkDistance() < 300:
+# check distance, if the minimum distance threshold is exceeded then proceed to walk forward, if not choose randomly to turn left or right
+if checkDistance() < 500:
 	if random.randint(1, 100) < 50:
 		turnLeft()
 	else:
